@@ -12,6 +12,14 @@ from datetime import datetime, timedelta
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
+class UnauthorizedError(Exception):
+    pass
+
+
+class ForbiddenError(Exception):
+    pass
+
+
 async def add_user(
     username: str, password: str, email: str, role: Role = Role.user
 ) -> User:
@@ -63,4 +71,16 @@ async def decode_access_token(
     if not username:
         return
     user = await get_user(username)
+    return user
+
+
+async def authorize_user(token: str, roles: list[Role]) -> User:
+    user = await decode_access_token(token)
+
+    if not user:
+        raise UnauthorizedError("Unauthorized")
+
+    if user.role not in roles:
+        raise ForbiddenError("Forbidden")
+
     return user

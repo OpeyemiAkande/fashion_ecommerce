@@ -7,7 +7,7 @@ from db.db_service import initialize_db_pool, close_db_pool, get_engine
 
 from web.auth import router as auth_router
 
-# from migrations import run_sql_migrations
+from migrations import run_sql_migrations
 
 router = APIRouter(prefix="/api")
 
@@ -28,9 +28,9 @@ async def lifespan(app: FastAPI):
     await initialize_db_pool()
     logger.info("Database connection pool initialized")
 
-    # logger.info("Running Migrations")
-    # await run_sql_migrations(get_engine())
-    # logger.info("Migrations complete")
+    logger.info("Running Migrations")
+    await run_sql_migrations(get_engine())
+    logger.info("Migrations complete")
 
     yield
 

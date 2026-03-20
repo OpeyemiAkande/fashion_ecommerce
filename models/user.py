@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, EmailStr
-from typing import List, Annotated
+from typing import List, Annotated, Optional
 from enum import Enum
 
 from sqlalchemy.orm import (
@@ -15,7 +15,10 @@ class Base(DeclarativeBase):
 
 class Role(str, Enum):
     user = "user"
+    customer = "customer"
+    vendor = "vendor"
     admin = "admin"
+    superadmin = "superadmin"
 
 
 class User(Base):
@@ -54,3 +57,8 @@ class ResponseCreateUser(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+
+class TokenData(BaseModel):
+    username: str | None = None
+    scopes: list[str] = []
