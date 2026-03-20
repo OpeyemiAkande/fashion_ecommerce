@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 from datetime import datetime, timezone
 from contextlib import asynccontextmanager
-from services.db_service import initialize_db_pool, close_db_pool, get_engine
+from db.db_service import initialize_db_pool, close_db_pool, get_engine
 
 from web.auth import router as auth_router
 

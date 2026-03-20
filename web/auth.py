@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, status
 from models.user import UserCreateRequest, UserCreateResponse, ResponseCreateUser
 import services.auth as service
+from data.auth import UserAlreadyExistsError
 
 router = APIRouter(prefix="/auth")
 
@@ -8,15 +9,14 @@ router = APIRouter(prefix="/auth")
 @router.post("/register", status_code=201, response_model=ResponseCreateUser)
 async def register_user(
     request: UserCreateRequest,
-) -> dict[str, UserCreateResponse | str]:
+) -> ResponseCreateUser:
     try:
 
         user = await service.add_user(**request.model_dump())
-        if not user:
-            raise HTTPException(
-                status.HTTP_409_CONFLICT, "username or email already exists"
-            )
         user_response = UserCreateResponse(username=user.username, email=user.email)
-        return {"message": "user created", "user": user_response}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+
+        return ResponseCreateUser(message="user created", user=user_response)
+    except UserAlreadyExistsError:
+        raise HTTPException(status_code=409, detail="username or email already exists")
+    except Exception:
+        raise HTTPException(status_code=500, detail="Internal server error")
