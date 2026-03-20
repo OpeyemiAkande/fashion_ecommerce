@@ -39,6 +39,18 @@ class UserCreateResponse(BaseModel):
     email: EmailStr
 
 
+class UserLoginRequest(BaseModel):
+    username_or_email: str = Field(
+        description="The registered username or email of the user"
+    )
+    password: str = Field(description="Registered password of the user")
+
+
 class ResponseCreateUser(BaseModel):
     message: Annotated[str, Field(default="user created")]
     user: UserCreateResponse
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
